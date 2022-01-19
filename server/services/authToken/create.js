@@ -1,12 +1,11 @@
-const jwt = require('jsonwebtoken');
-const { AuthToken } = require('../../db');
+import jwt from "jsonwebtoken";
+import { AuthToken } from "../../db/index.js";
 
 function stringFromUserAgent(useragent) {
-  return `${useragent.isMobile ? 'Mobile' : ''} ${useragent.browser}`;
+  return `${useragent.isMobile ? "Mobile" : ""} ${useragent.browser}`;
 }
 
-
-const create = async(user, useragent) => {
+const create = async (user, useragent) => {
   const authToken = new AuthToken({
     userId: user._id,
     userAgent: stringFromUserAgent(useragent),
@@ -21,9 +20,8 @@ const create = async(user, useragent) => {
       expiresIn: 31536e3,
     }
   );
-  console.log('HERE IS THE JWT', jwtToken);
+  console.log("HERE IS THE JWT", jwtToken);
   return jwtToken;
 };
 
-module.exports = { create }
-;
+export default create;

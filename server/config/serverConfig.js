@@ -1,13 +1,11 @@
 let mongoURL;
+import dotenv from "dotenv";
+dotenv.config();
 
-require('dotenv').config();
-
-if (process.env.NODE_ENV === 'development') {
-  mongoURL = 'mongodb://localhost:27017/tyler-react-typescript-boilerplate';
+if (process.env.NODE_ENV === "development") {
+  mongoURL = "mongodb://localhost:27017/mern-starter";
 } else {
   mongoURL = process.env.MONGO_URL;
 }
 
-module.exports = {
-  mongoURL,
-};
+export default { mongoURL };

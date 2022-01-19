@@ -1,3 +1,3 @@
-const serverConfig = require('./serverConfig');
+import serverConfig from "./serverConfig.js";
 
-exports.serverConfig = serverConfig;
+export default serverConfig;

@@ -1,4 +1,1 @@
-const { create } = require('./create');
-
-module.exports = { create }
-;
+export * as create from "./create.js";

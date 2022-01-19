@@ -1,46 +1,41 @@
-const path = require('path');
-const express = require('express');
-const morgan = require('morgan');
-const compression = require('compression');
+import path from 'path';
+import express from 'express';
+import morgan from 'morgan';
+import compression from 'compression';
 const PORT = process.env.PORT || 8080;
 const app = express();
-const db = require('./db');
-const useragent = require('express-useragent');
+// import db from './db/db.js';
+import useragent from 'express-useragent';
+import bodyParser from 'body-parser';
+import api from './api/index.js';
+
 // import sslRedirect from 'heroku-ssl-redirect';
-// add "type": "module", to package.json to allow import xxx from './file syntax
 
-
-module.exports = app;
-
-// if (process.env.NODE_ENV !== 'production') require('../secrets');
+export default app;
 
 const createApp = () => {
   // logging middleware
   app.use(morgan('dev'));
   // app.use(sslRedirect());
 
-
   // body parsing middleware
-  var bodyParser = require('body-parser');
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   // compression middleware
   app.use(compression());
   app.use(useragent.express());
-
-
-  app.use('/api', require('./api'));
-
+  app.use('/api', api);
 
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use(express.static(path.join(__dirname, '..', 'dist')));
 
   // any remaining requests with an extension (.js, .css, etc.) send 404
-  app.use((req, res, next) => {
+  app.use((req, _res, next) => {
     if (path.extname(req.path).length) {
       const err = new Error('Not found');
+      // @ts-ignore
       err.status = 404;
       next(err);
     } else {
@@ -49,23 +44,30 @@ const createApp = () => {
   });
 
   // sends index.html
-  app.use('*', (req, res) => {
+  app.use('*', (_req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public/index.html'));
   });
 
   // error handling endware
-  app.use((err, req, res, next) => {
-    console.error(err);
-    console.error(err.stack);
-    res.status(err.status || 500).send(err.message || 'Internal server error.');
-  });
+  app.use(
+    (
+      err: { stack: any; status: any; message: any },
+      _req: any,
+      res: any,
+      _next: any
+    ) => {
+      console.error(err);
+      console.error(err.stack);
+      res
+        .status(err.status || 500)
+        .send(err.message || 'Internal server error.');
+    }
+  );
 };
 
 const startListening = () => {
   // start listening (and create a 'server' object representing our server)
-  const server = app.listen(PORT, () =>
-    console.log(`Mixing it up on port ${PORT}`)
-  );
+  app.listen(PORT, () => console.log(`Mixing it up on port ${PORT}`));
 };
 
 async function bootApp() {

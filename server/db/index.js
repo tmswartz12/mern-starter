@@ -1,11 +1,5 @@
-const db = require('./db');
-const { User } = require('./user');
-const { AuthToken } = require('./authToken');
+import db from "./db.js";
+export * as User from "./user.js";
+export * as AuthToken from "./authToken.js";
 
-
-module.exports = {
-  db,
-  User,
-  AuthToken,
-}
-;
+export default db;
